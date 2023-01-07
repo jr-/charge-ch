@@ -1,5 +1,5 @@
 import { CreateChargeController } from './create-charge'
-import { MissingParamError } from '../error'
+import { MissingParamError } from '../../error'
 
 const makeSut = (): CreateChargeController => {
   return new CreateChargeController()
