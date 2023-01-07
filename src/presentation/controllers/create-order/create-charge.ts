@@ -1,8 +1,8 @@
 import { MissingParamError } from '../../error'
-import { HttpRequest, HttpResponse } from '../../protocols'
+import { Controller, HttpRequest, HttpResponse } from '../../protocols'
 
-export class CreateChargeController {
-  handle (httpRequest: HttpRequest): HttpResponse {
+export class CreateChargeController implements Controller {
+  async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     return {
       statusCode: 400,
       body: new MissingParamError('charges')
