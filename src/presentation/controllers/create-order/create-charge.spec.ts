@@ -1,5 +1,5 @@
 import { CreateChargeController } from './create-charge'
-import { MissingParamError } from './error'
+import { MissingParamError } from '../error'
 
 describe('Create Charge Controller', () => {
   test('Should return 400 if no charges are provided', () => {
