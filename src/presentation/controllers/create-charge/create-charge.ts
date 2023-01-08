@@ -2,12 +2,15 @@ import { InvalidParamError, MissingParamError } from '../../error'
 import { Controller, HttpRequest, HttpResponse } from '../../protocols'
 import { badRequest, ok, serverError } from '../../helper/http-helper'
 import { EmailValidator } from '../../protocols/email-validator'
+import { CpfValidator } from '../../protocols/cpf-validator'
 
 export class CreateChargeController implements Controller {
   private readonly emailValidator: EmailValidator
+  private readonly cpfValidator: CpfValidator
 
-  constructor (emailValidator: EmailValidator) {
+  constructor (emailValidator: EmailValidator, cpfValidator: CpfValidator) {
     this.emailValidator = emailValidator
+    this.cpfValidator = cpfValidator
   }
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
@@ -33,9 +36,13 @@ export class CreateChargeController implements Controller {
       }
 
       for (const charge of body.charges) {
-        const isValid = this.emailValidator.isValid(charge.email)
-        if (!isValid) {
+        const isValidEmail = this.emailValidator.isValid(charge.email)
+        if (!isValidEmail) {
           return badRequest(new InvalidParamError('email'))
+        }
+        const isValidCpf = this.cpfValidator.isValid(charge.governamentId)
+        if (!isValidCpf) {
+          return badRequest(new InvalidParamError('governamentId'))
         }
       }
 
