@@ -1,5 +1,5 @@
 import { CreateChargeBulkController } from './create-charge-bulk'
-import { InvalidParamError, MissingParamError, ServerError } from '../../error'
+import { InvalidParamError, MissingParamError, ServerError } from '../../errors'
 import { EmailValidator } from '../../protocols/email-validator'
 import { CpfValidator } from '../../protocols/cpf-validator'
 

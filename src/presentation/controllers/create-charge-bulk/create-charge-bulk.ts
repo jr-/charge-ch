@@ -1,6 +1,6 @@
-import { InvalidParamError, MissingParamError } from '../../error'
+import { InvalidParamError, MissingParamError } from '../../errors'
 import { Controller, HttpRequest, HttpResponse } from '../../protocols'
-import { badRequest, ok, serverError } from '../../helper/http-helper'
+import { badRequest, ok, serverError } from '../../helpers/http-helper'
 import { EmailValidator } from '../../protocols/email-validator'
 import { CpfValidator } from '../../protocols/cpf-validator'
 
