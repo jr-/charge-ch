@@ -1,4 +1,4 @@
-import { CreateChargeController } from './create-charge'
+import { CreateChargeBulkController } from './create-charge-bulk'
 import { InvalidParamError, MissingParamError, ServerError } from '../../error'
 import { EmailValidator } from '../../protocols/email-validator'
 import { CpfValidator } from '../../protocols/cpf-validator'
@@ -22,7 +22,7 @@ const makeCpfValidator = (): CpfValidator => {
 }
 
 interface SutTypes {
-  sut: CreateChargeController
+  sut: CreateChargeBulkController
   emailValidatorStub: EmailValidator
   cpfValidatorStub: CpfValidator
 }
@@ -30,7 +30,7 @@ interface SutTypes {
 const makeSut = (): SutTypes => {
   const emailValidatorStub = makeEmailValidator()
   const cpfValidatorStub = makeCpfValidator()
-  const sut = new CreateChargeController(emailValidatorStub, cpfValidatorStub)
+  const sut = new CreateChargeBulkController(emailValidatorStub, cpfValidatorStub)
 
   return {
     sut,

@@ -4,7 +4,7 @@ import { badRequest, ok, serverError } from '../../helper/http-helper'
 import { EmailValidator } from '../../protocols/email-validator'
 import { CpfValidator } from '../../protocols/cpf-validator'
 
-export class CreateChargeController implements Controller {
+export class CreateChargeBulkController implements Controller {
   private readonly emailValidator: EmailValidator
   private readonly cpfValidator: CpfValidator
 
