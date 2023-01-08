@@ -33,6 +33,7 @@
   "dependencies": {
     "cpf-cnpj-validator": "^1.0.3",
     "express": "^4.18.2",
+    "fast-glob": "^3.2.12",
     "validator": "^13.7.0"
   }
 }
