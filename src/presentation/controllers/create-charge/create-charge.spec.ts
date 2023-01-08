@@ -1,5 +1,5 @@
 import { CreateChargeController } from './create-charge'
-import { InvalidParamError, MissingParamError } from '../../error'
+import { InvalidParamError, MissingParamError, ServerError } from '../../error'
 import { EmailValidator } from '../../protocols/email-validator'
 
 const makeEmailValidator = (): EmailValidator => {
@@ -210,5 +210,29 @@ describe('Create Charge Controller', () => {
     }
     await sut.handle(httpRequest)
     expect(isValidSpy).toHaveBeenCalledWith('any_email@mail.com')
+  })
+
+  test('Should return 500 if EmailValidator throws', async () => {
+    const { sut, emailValidatorStub } = makeSut()
+    jest.spyOn(emailValidatorStub, 'isValid').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const httpRequest = {
+      body: {
+        charges: [
+          {
+            name: 'any_name',
+            email: 'any_email@mail.com',
+            governamentId: 'any_governament_id',
+            debtAmount: 'any_debt_amount',
+            debtDueDate: 'any_date',
+            debtId: 'any_id'
+          }
+        ]
+      }
+    }
+    const httpResponse = await sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
   })
 })
