@@ -1,8 +1,15 @@
 import { InvalidParamError, MissingParamError } from '../../error'
 import { Controller, HttpRequest, HttpResponse } from '../../protocols'
 import { badRequest, ok } from '../../helper/http-helper'
+import { EmailValidator } from '../../protocols/email-validator'
 
 export class CreateChargeController implements Controller {
+  private readonly emailValidator: EmailValidator
+
+  constructor (emailValidator: EmailValidator) {
+    this.emailValidator = emailValidator
+  }
+
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     const { body } = httpRequest
 
@@ -21,6 +28,13 @@ export class CreateChargeController implements Controller {
         if (!charge[field]) {
           return badRequest(new MissingParamError(field))
         }
+      }
+    }
+
+    for (const charge of body.charges) {
+      const isValid = this.emailValidator.isValid(charge.email)
+      if (!isValid) {
+        return badRequest(new InvalidParamError('email'))
       }
     }
 
