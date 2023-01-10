@@ -1,12 +1,6 @@
-import { ChargeModel } from '../../domain/models/charge'
-import { ChargesModel } from '../../domain/models/charges'
-import { GenerateBoleto } from '../protocols/generate-boleto'
+import { ChargeModel } from '../../../domain/models/charge'
 import { CreateChargesUseCase } from './create-charges'
-
-interface SutTypes {
-  sut: CreateChargesUseCase
-  generateBoletoStub: GenerateBoleto
-}
+import { AddChargeRepository, GenerateBoleto, ChargesModel } from './create-charges-protocols'
 
 const makeGenerateBoleto = (): GenerateBoleto => {
   class GenerateBoletoStub implements GenerateBoleto {
@@ -17,13 +11,30 @@ const makeGenerateBoleto = (): GenerateBoleto => {
   return new GenerateBoletoStub()
 }
 
+const makeAddChargeRepository = (): AddChargeRepository => {
+  class AddChargeRepositoryStub implements AddChargeRepository {
+    async add (charge: ChargeModel): Promise<boolean> {
+      return await new Promise(resolve => { resolve(true) })
+    }
+  }
+  return new AddChargeRepositoryStub()
+}
+
+interface SutTypes {
+  sut: CreateChargesUseCase
+  generateBoletoStub: GenerateBoleto
+  addChargeRepositoryStub: AddChargeRepository
+}
+
 const makeSut = (): SutTypes => {
   const generateBoletoStub = makeGenerateBoleto()
-  const sut = new CreateChargesUseCase(generateBoletoStub)
+  const addChargeRepositoryStub = makeAddChargeRepository()
+  const sut = new CreateChargesUseCase(generateBoletoStub, addChargeRepositoryStub)
 
   return {
     sut,
-    generateBoletoStub
+    generateBoletoStub,
+    addChargeRepositoryStub
   }
 }
 
@@ -70,5 +81,27 @@ describe('Create Charges Usecase', () => {
     }
     const promise = sut.create(chargesData)
     await expect(promise).rejects.toThrow()
+  })
+
+  test('Should call AddChargeRepository with the correct chargeModel', async () => {
+    const { sut, addChargeRepositoryStub } = makeSut()
+    const addSpy = jest.spyOn(addChargeRepositoryStub, 'add')
+
+    const chargeData: ChargeModel = {
+      name: 'valid_name',
+      governamentId: 'valid_governament_id',
+      email: 'valid_email',
+      debtAmount: 'valid_debt_amount',
+      debtDueDate: 'valid_debt_due_date',
+      debtId: 'valid_debt_id'
+    }
+
+    const chargesData: ChargesModel = {
+      charges: [
+        chargeData
+      ]
+    }
+    await sut.create(chargesData)
+    expect(addSpy).toHaveBeenLastCalledWith(chargeData)
   })
 })
