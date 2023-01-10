@@ -1,4 +1,4 @@
-import { AddChargeRepository, AddChargesModel, CreateCharges, GenerateBoleto, SendEmail } from './create-charges-protocols'
+import { AddChargeModel, AddChargeRepository, AddChargesModel, CreateCharges, GenerateBoleto, SendEmail } from './create-charges-protocols'
 
 export class CreateChargesUseCase implements CreateCharges {
   private readonly generateBoleto: GenerateBoleto
@@ -12,10 +12,21 @@ export class CreateChargesUseCase implements CreateCharges {
   }
 
   async create (chargesData: AddChargesModel): Promise<boolean> {
-    const htmlBoleto = await this.generateBoleto.generate(chargesData.charges[0])
-    await this.sendEmail.send(chargesData.charges[0], htmlBoleto)
-    await this.addChargeRepository.add(chargesData.charges[0])
+    const { charges } = chargesData
+    const chargePromises: Array<Promise<boolean>> = []
+    charges.forEach(async charge => {
+      chargePromises.push(this.createOne(charge))
+    })
 
+    await Promise.all(chargePromises)
+
+    return true
+  }
+
+  private async createOne (charge: AddChargeModel): Promise<boolean> {
+    const htmlBoleto = await this.generateBoleto.generate(charge)
+    await this.sendEmail.send(charge, htmlBoleto)
+    await this.addChargeRepository.add(charge)
     return true
   }
 }
