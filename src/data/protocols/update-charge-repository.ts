@@ -1,4 +1,5 @@
 export interface DbUpdateChargeAsPaid {
+  status: string
   paidInfo: {
     paidAt: string
     paidAmount: string
