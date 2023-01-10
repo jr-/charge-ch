@@ -2,6 +2,7 @@ import { CreateChargeBulkController } from './create-charge-bulk'
 import { InvalidParamError, MissingParamError, ServerError } from '../../errors'
 import { EmailValidator } from '../../protocols/email-validator'
 import { CpfValidator } from '../../protocols/cpf-validator'
+import { AddChargeModel, AddChargesModel, CreateCharges } from '../../../domain/usecases/create-charges'
 
 const makeEmailValidator = (): EmailValidator => {
   class EmailValidatorStub implements EmailValidator {
@@ -21,21 +22,37 @@ const makeCpfValidator = (): CpfValidator => {
   return new CpfValidatorStub()
 }
 
+const makeCreateChargesUseCase = (): CreateCharges => {
+  class CreateChargesUseCaseStub implements CreateCharges {
+    async create (chargesData: AddChargesModel): Promise<boolean> {
+      return true
+    }
+
+    private async createOne (chargeData: AddChargeModel): Promise<boolean> {
+      return true
+    }
+  }
+  return new CreateChargesUseCaseStub()
+}
+
 interface SutTypes {
   sut: CreateChargeBulkController
   emailValidatorStub: EmailValidator
   cpfValidatorStub: CpfValidator
+  createChargesUseCaseStub: CreateCharges
 }
 
 const makeSut = (): SutTypes => {
   const emailValidatorStub = makeEmailValidator()
   const cpfValidatorStub = makeCpfValidator()
-  const sut = new CreateChargeBulkController(emailValidatorStub, cpfValidatorStub)
+  const createChargesUseCaseStub = makeCreateChargesUseCase()
+  const sut = new CreateChargeBulkController(emailValidatorStub, cpfValidatorStub, createChargesUseCaseStub)
 
   return {
     sut,
     emailValidatorStub,
-    cpfValidatorStub
+    cpfValidatorStub,
+    createChargesUseCaseStub
   }
 }
 
