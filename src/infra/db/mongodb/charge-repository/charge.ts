@@ -5,7 +5,7 @@ import { MongoHelper } from '../helpers/mongo-helper'
 export class ChargeMongoRepository implements AddChargeRepository {
   async add (chargeData: AddChargeModel): Promise<boolean> {
     const chargeCollection = MongoHelper.getCollection('charges')
-    const result = await chargeCollection.insertOne(chargeData)
+    const result = await chargeCollection.insertOne({ ...chargeData, status: 'waiting_payment' })
     return result.insertedId !== null
   }
 }
