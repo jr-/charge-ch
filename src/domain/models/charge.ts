@@ -23,5 +23,5 @@ export interface PaidChargeModel {
   debtDueDate: string
   debtId: string
   status: string
-  paidInfo: PaidInfo
+  paidInfo?: PaidInfo
 }
