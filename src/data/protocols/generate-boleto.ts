@@ -1,5 +1,5 @@
-import { ChargeModel } from '../../domain/models/charge'
+import { AddChargeModel } from '../../domain/usecases/create-charges'
 
 export interface GenerateBoleto {
-  generate: (chargeModel: ChargeModel) => Promise<string>
+  generate: (chargeModel: AddChargeModel) => Promise<string>
 }

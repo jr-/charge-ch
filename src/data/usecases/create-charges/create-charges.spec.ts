@@ -1,10 +1,9 @@
-import { ChargeModel } from '../../../domain/models/charge'
 import { CreateChargesUseCase } from './create-charges'
-import { AddChargeRepository, GenerateBoleto, ChargesModel, SendEmail } from './create-charges-protocols'
+import { AddChargeRepository, GenerateBoleto, AddChargeModel, SendEmail, AddChargesModel } from './create-charges-protocols'
 
 const makeGenerateBoleto = (): GenerateBoleto => {
   class GenerateBoletoStub implements GenerateBoleto {
-    async generate (charge: ChargeModel): Promise<string> {
+    async generate (charge: AddChargeModel): Promise<string> {
       return await new Promise(resolve => { resolve('html_boleto_string') })
     }
   }
@@ -13,7 +12,7 @@ const makeGenerateBoleto = (): GenerateBoleto => {
 
 const makeAddChargeRepository = (): AddChargeRepository => {
   class AddChargeRepositoryStub implements AddChargeRepository {
-    async add (charge: ChargeModel): Promise<boolean> {
+    async add (charge: AddChargeModel): Promise<boolean> {
       return await new Promise(resolve => { resolve(true) })
     }
   }
@@ -22,7 +21,7 @@ const makeAddChargeRepository = (): AddChargeRepository => {
 
 const makeSendEmail = (): SendEmail => {
   class SendEmailStub implements SendEmail {
-    async send (charge: ChargeModel): Promise<boolean> {
+    async send (charge: AddChargeModel): Promise<boolean> {
       return await new Promise(resolve => { resolve(true) })
     }
   }
@@ -55,7 +54,7 @@ describe('Create Charges Usecase', () => {
     const { sut, generateBoletoStub } = makeSut()
     const generateBoletoSpy = jest.spyOn(generateBoletoStub, 'generate')
 
-    const chargeData: ChargeModel = {
+    const chargeData: AddChargeModel = {
       name: 'valid_name',
       governamentId: 'valid_governament_id',
       email: 'valid_email',
@@ -64,7 +63,7 @@ describe('Create Charges Usecase', () => {
       debtId: 'valid_debt_id'
     }
 
-    const chargesData: ChargesModel = {
+    const chargesData: AddChargesModel = {
       charges: [
         chargeData
       ]
@@ -77,7 +76,7 @@ describe('Create Charges Usecase', () => {
     const { sut, generateBoletoStub } = makeSut()
     jest.spyOn(generateBoletoStub, 'generate').mockReturnValueOnce(new Promise((resolve, reject) => { reject(new Error()) }))
 
-    const chargeData: ChargeModel = {
+    const chargeData: AddChargeModel = {
       name: 'valid_name',
       governamentId: 'valid_governament_id',
       email: 'valid_email',
@@ -86,7 +85,7 @@ describe('Create Charges Usecase', () => {
       debtId: 'valid_debt_id'
     }
 
-    const chargesData: ChargesModel = {
+    const chargesData: AddChargesModel = {
       charges: [
         chargeData
       ]
@@ -99,7 +98,7 @@ describe('Create Charges Usecase', () => {
     const { sut, addChargeRepositoryStub } = makeSut()
     const addSpy = jest.spyOn(addChargeRepositoryStub, 'add')
 
-    const chargeData: ChargeModel = {
+    const chargeData: AddChargeModel = {
       name: 'valid_name',
       governamentId: 'valid_governament_id',
       email: 'valid_email',
@@ -108,7 +107,7 @@ describe('Create Charges Usecase', () => {
       debtId: 'valid_debt_id'
     }
 
-    const chargesData: ChargesModel = {
+    const chargesData: AddChargesModel = {
       charges: [
         chargeData
       ]
@@ -121,7 +120,7 @@ describe('Create Charges Usecase', () => {
     const { sut, addChargeRepositoryStub } = makeSut()
     jest.spyOn(addChargeRepositoryStub, 'add').mockReturnValueOnce(new Promise((resolve, reject) => { reject(new Error()) }))
 
-    const chargeData: ChargeModel = {
+    const chargeData: AddChargeModel = {
       name: 'valid_name',
       governamentId: 'valid_governament_id',
       email: 'valid_email',
@@ -130,7 +129,7 @@ describe('Create Charges Usecase', () => {
       debtId: 'valid_debt_id'
     }
 
-    const chargesData: ChargesModel = {
+    const chargesData: AddChargesModel = {
       charges: [
         chargeData
       ]
@@ -143,7 +142,7 @@ describe('Create Charges Usecase', () => {
     const { sut, sendEmailStub } = makeSut()
     const sendSpy = jest.spyOn(sendEmailStub, 'send')
 
-    const chargeData: ChargeModel = {
+    const chargeData: AddChargeModel = {
       name: 'valid_name',
       governamentId: 'valid_governament_id',
       email: 'valid_email',
@@ -152,7 +151,7 @@ describe('Create Charges Usecase', () => {
       debtId: 'valid_debt_id'
     }
 
-    const chargesData: ChargesModel = {
+    const chargesData: AddChargesModel = {
       charges: [
         chargeData
       ]
@@ -165,7 +164,7 @@ describe('Create Charges Usecase', () => {
     const { sut, sendEmailStub } = makeSut()
     jest.spyOn(sendEmailStub, 'send').mockReturnValueOnce(new Promise((resolve, reject) => { reject(new Error()) }))
 
-    const chargeData: ChargeModel = {
+    const chargeData: AddChargeModel = {
       name: 'valid_name',
       governamentId: 'valid_governament_id',
       email: 'valid_email',
@@ -174,7 +173,7 @@ describe('Create Charges Usecase', () => {
       debtId: 'valid_debt_id'
     }
 
-    const chargesData: ChargesModel = {
+    const chargesData: AddChargesModel = {
       charges: [
         chargeData
       ]

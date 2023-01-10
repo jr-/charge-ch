@@ -1,5 +1,5 @@
-import { ChargeModel } from '../../domain/models/charge'
+import { AddChargeModel } from '../../domain/usecases/create-charges'
 
 export interface AddChargeRepository {
-  add: (charge: ChargeModel) => Promise<boolean>
+  add: (charge: AddChargeModel) => Promise<boolean>
 }

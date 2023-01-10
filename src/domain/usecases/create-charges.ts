@@ -1,5 +1,17 @@
-import { ChargesModel } from '../models/charges'
+
+export interface AddChargeModel {
+  name: string
+  governamentId: string
+  email: string
+  debtAmount: string
+  debtDueDate: string
+  debtId: string
+}
+
+export interface AddChargesModel {
+  charges: AddChargeModel[]
+}
 
 export interface CreateCharges {
-  create: (chargesData: ChargesModel) => Promise<boolean>
+  create: (chargesData: AddChargesModel) => Promise<boolean>
 }
