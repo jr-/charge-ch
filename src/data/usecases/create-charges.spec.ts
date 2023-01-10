@@ -8,13 +8,17 @@ interface SutTypes {
   generateBoletoStub: GenerateBoleto
 }
 
-const makeSut = (): SutTypes => {
-  class GenerateBoletoStub {
+const makeGenerateBoleto = (): GenerateBoleto => {
+  class GenerateBoletoStub implements GenerateBoleto {
     async generate (charge: ChargeModel): Promise<string> {
       return await new Promise(resolve => { resolve('html_boleto_string') })
     }
   }
-  const generateBoletoStub = new GenerateBoletoStub()
+  return new GenerateBoletoStub()
+}
+
+const makeSut = (): SutTypes => {
+  const generateBoletoStub = makeGenerateBoleto()
   const sut = new CreateChargesUseCase(generateBoletoStub)
 
   return {
