@@ -157,7 +157,7 @@ describe('Create Charges Usecase', () => {
       ]
     }
     await sut.create(chargesData)
-    expect(sendSpy).toHaveBeenLastCalledWith(chargeData)
+    expect(sendSpy).toHaveBeenLastCalledWith(chargeData, 'html_boleto_string')
   })
 
   test('Should throw if SendEmail throws', async () => {
