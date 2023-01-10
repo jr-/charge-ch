@@ -49,4 +49,26 @@ describe('Create Charges Usecase', () => {
     await sut.create(chargesData)
     expect(generateBoletoSpy).toHaveBeenLastCalledWith(chargeData)
   })
+
+  test('Should throw if GenerateBoleto throws', async () => {
+    const { sut, generateBoletoStub } = makeSut()
+    jest.spyOn(generateBoletoStub, 'generate').mockReturnValueOnce(new Promise((resolve, reject) => { reject(new Error()) }))
+
+    const chargeData: ChargeModel = {
+      name: 'valid_name',
+      governamentId: 'valid_governament_id',
+      email: 'valid_email',
+      debtAmount: 'valid_debt_amount',
+      debtDueDate: 'valid_debt_due_date',
+      debtId: 'valid_debt_id'
+    }
+
+    const chargesData: ChargesModel = {
+      charges: [
+        chargeData
+      ]
+    }
+    const promise = sut.create(chargesData)
+    await expect(promise).rejects.toThrow()
+  })
 })
