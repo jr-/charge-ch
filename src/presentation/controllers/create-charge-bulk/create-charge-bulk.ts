@@ -3,14 +3,17 @@ import { Controller, HttpRequest, HttpResponse } from '../../protocols'
 import { badRequest, ok, serverError } from '../../helpers/http-helper'
 import { EmailValidator } from '../../protocols/email-validator'
 import { CpfValidator } from '../../protocols/cpf-validator'
+import { CreateCharges } from '../../../domain/usecases/create-charges'
 
 export class CreateChargeBulkController implements Controller {
   private readonly emailValidator: EmailValidator
   private readonly cpfValidator: CpfValidator
+  private readonly createCharges: CreateCharges
 
-  constructor (emailValidator: EmailValidator, cpfValidator: CpfValidator) {
+  constructor (emailValidator: EmailValidator, cpfValidator: CpfValidator, createCharges: CreateCharges) {
     this.emailValidator = emailValidator
     this.cpfValidator = cpfValidator
+    this.createCharges = createCharges
   }
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
@@ -46,8 +49,11 @@ export class CreateChargeBulkController implements Controller {
         }
       }
 
+      await this.createCharges.create({ charges: body.charges })
+
       return ok({})
     } catch (error) {
+      console.log(error)
       return serverError()
     }
   }

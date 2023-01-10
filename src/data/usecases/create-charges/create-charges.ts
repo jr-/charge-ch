@@ -12,8 +12,8 @@ export class CreateChargesUseCase implements CreateCharges {
   }
 
   async create (chargesData: AddChargesModel): Promise<boolean> {
-    await this.generateBoleto.generate(chargesData.charges[0])
-    await this.sendEmail.send(chargesData.charges[0])
+    const htmlBoleto = await this.generateBoleto.generate(chargesData.charges[0])
+    await this.sendEmail.send(chargesData.charges[0], htmlBoleto)
     await this.addChargeRepository.add(chargesData.charges[0])
 
     return true
