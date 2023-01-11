@@ -1,55 +1,52 @@
 import { InvalidParamError, MissingParamError } from '../../errors'
 import { Controller, HttpRequest, HttpResponse } from '../../protocols'
 import { badRequest, ok, serverError } from '../../helpers/http-helper'
-import { EmailValidator } from '../../protocols/email-validator'
-import { CpfValidator } from '../../protocols/cpf-validator'
-import { CreateCharges } from '../../../domain/usecases/create-charges'
+import { AddChargeModel, CreateCharges } from '../../../domain/usecases/create-charges'
+import csvToJson from 'convert-csv-to-json'
+import path from 'path'
+import { File } from '../../../domain/models/file'
 
 export class CreateChargeBulkController implements Controller {
-  private readonly emailValidator: EmailValidator
-  private readonly cpfValidator: CpfValidator
   private readonly createCharges: CreateCharges
 
-  constructor (emailValidator: EmailValidator, cpfValidator: CpfValidator, createCharges: CreateCharges) {
-    this.emailValidator = emailValidator
-    this.cpfValidator = cpfValidator
+  constructor (createCharges: CreateCharges) {
     this.createCharges = createCharges
   }
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      const { body } = httpRequest
-
-      if (!body.charges) {
-        return badRequest(new MissingParamError('charges'))
+      const { file } = httpRequest.body as { file: File }
+      if (!file) {
+        return badRequest(new MissingParamError('file'))
+      }
+      if (file.extension !== 'csv') {
+        return badRequest(new InvalidParamError('file'))
       }
 
-      const { charges } = body
-      if (charges && Object.keys(charges).length === 0) {
-        return badRequest(new InvalidParamError('charges'))
+      const uploadFolder = path.join(__dirname, '../../../../download/')
+      const json = csvToJson.fieldDelimiter(',').getJsonFromCsv(`${uploadFolder}${file.name}`)
+
+      if (json.length === 0) {
+        return badRequest(new InvalidParamError('file'))
       }
+
+      const charge = json[0]
 
       const requiredChargeFields = ['name', 'governamentId', 'email', 'debtAmount', 'debtDueDate', 'debtId']
-      for (const charge of body.charges) {
-        for (const field of requiredChargeFields) {
-          if (!charge[field]) {
-            return badRequest(new MissingParamError(field))
-          }
+
+      for (const field of requiredChargeFields) {
+        if (!charge[field]) {
+          return badRequest(new MissingParamError(field))
         }
       }
+      const chargesData: AddChargeModel[] = json.map((entry) => {
+        const { name, governamentId, email, debtAmount, debtDueDate, debtId } = entry
+        const charge: AddChargeModel = { name, governamentId, email, debtAmount, debtDueDate, debtId }
+        return charge
+      })
 
-      for (const charge of body.charges) {
-        const isValidEmail = this.emailValidator.isValid(charge.email)
-        if (!isValidEmail) {
-          return badRequest(new InvalidParamError('email'))
-        }
-        const isValidCpf = this.cpfValidator.isValid(charge.governamentId)
-        if (!isValidCpf) {
-          return badRequest(new InvalidParamError('governamentId'))
-        }
-      }
-
-      await this.createCharges.create({ charges: body.charges })
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      this.createCharges.create({ charges: chargesData })
 
       return ok({})
     } catch (error) {
