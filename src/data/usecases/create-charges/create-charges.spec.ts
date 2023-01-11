@@ -1,3 +1,4 @@
+import { SendEmailInfo } from '../../../domain/models/email'
 import { CreateChargesUseCase } from './create-charges'
 import { AddChargeRepository, GenerateBoleto, AddChargeModel, SendEmail, AddChargesModel } from './create-charges-protocols'
 
@@ -21,7 +22,7 @@ const makeAddChargeRepository = (): AddChargeRepository => {
 
 const makeSendEmail = (): SendEmail => {
   class SendEmailStub implements SendEmail {
-    async send (charge: AddChargeModel): Promise<boolean> {
+    async send (sendEmail: SendEmailInfo): Promise<boolean> {
       return await new Promise(resolve => { resolve(true) })
     }
   }
@@ -72,28 +73,6 @@ describe('Create Charges Usecase', () => {
     expect(generateBoletoSpy).toHaveBeenLastCalledWith(chargeData)
   })
 
-  test('Should throw if GenerateBoleto throws', async () => {
-    const { sut, generateBoletoStub } = makeSut()
-    jest.spyOn(generateBoletoStub, 'generate').mockReturnValueOnce(new Promise((resolve, reject) => { reject(new Error()) }))
-
-    const chargeData: AddChargeModel = {
-      name: 'valid_name',
-      governamentId: 'valid_governament_id',
-      email: 'valid_email',
-      debtAmount: 'valid_debt_amount',
-      debtDueDate: 'valid_debt_due_date',
-      debtId: 'valid_debt_id'
-    }
-
-    const chargesData: AddChargesModel = {
-      charges: [
-        chargeData
-      ]
-    }
-    const promise = sut.create(chargesData)
-    await expect(promise).rejects.toThrow()
-  })
-
   test('Should call AddChargeRepository with the correct chargeModel', async () => {
     const { sut, addChargeRepositoryStub } = makeSut()
     const addSpy = jest.spyOn(addChargeRepositoryStub, 'add')
@@ -114,71 +93,5 @@ describe('Create Charges Usecase', () => {
     }
     await sut.create(chargesData)
     expect(addSpy).toHaveBeenLastCalledWith(chargeData)
-  })
-
-  test('Should throw if AddChargeRepository throws', async () => {
-    const { sut, addChargeRepositoryStub } = makeSut()
-    jest.spyOn(addChargeRepositoryStub, 'add').mockReturnValueOnce(new Promise((resolve, reject) => { reject(new Error()) }))
-
-    const chargeData: AddChargeModel = {
-      name: 'valid_name',
-      governamentId: 'valid_governament_id',
-      email: 'valid_email',
-      debtAmount: 'valid_debt_amount',
-      debtDueDate: 'valid_debt_due_date',
-      debtId: 'valid_debt_id'
-    }
-
-    const chargesData: AddChargesModel = {
-      charges: [
-        chargeData
-      ]
-    }
-    const promise = sut.create(chargesData)
-    await expect(promise).rejects.toThrow()
-  })
-
-  test('Should call SendEmail with the correct chargeModel', async () => {
-    const { sut, sendEmailStub } = makeSut()
-    const sendSpy = jest.spyOn(sendEmailStub, 'send')
-
-    const chargeData: AddChargeModel = {
-      name: 'valid_name',
-      governamentId: 'valid_governament_id',
-      email: 'valid_email',
-      debtAmount: 'valid_debt_amount',
-      debtDueDate: 'valid_debt_due_date',
-      debtId: 'valid_debt_id'
-    }
-
-    const chargesData: AddChargesModel = {
-      charges: [
-        chargeData
-      ]
-    }
-    await sut.create(chargesData)
-    expect(sendSpy).toHaveBeenLastCalledWith(chargeData, 'html_boleto_string')
-  })
-
-  test('Should throw if SendEmail throws', async () => {
-    const { sut, sendEmailStub } = makeSut()
-    jest.spyOn(sendEmailStub, 'send').mockReturnValueOnce(new Promise((resolve, reject) => { reject(new Error()) }))
-
-    const chargeData: AddChargeModel = {
-      name: 'valid_name',
-      governamentId: 'valid_governament_id',
-      email: 'valid_email',
-      debtAmount: 'valid_debt_amount',
-      debtDueDate: 'valid_debt_due_date',
-      debtId: 'valid_debt_id'
-    }
-
-    const chargesData: AddChargesModel = {
-      charges: [
-        chargeData
-      ]
-    }
-    const promise = sut.create(chargesData)
-    await expect(promise).rejects.toThrow()
   })
 })

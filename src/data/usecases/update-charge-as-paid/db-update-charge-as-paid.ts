@@ -11,12 +11,11 @@ export class DbUpdateChargeAsPaid implements UpdateChargeAsPaidUseCase {
     this.updateChargeRepository = updateChargeRepository
   }
 
-  async update (charge: UpdateChargeAsPaidModel): Promise<boolean> {
+  async update (charge: UpdateChargeAsPaidModel): Promise<void> {
     const { debtId, paidAt, paidAmount, paidBy } = charge
     const found = await this.findChargeRepository.findByDebtId(debtId)
     if (found) {
       await this.updateChargeRepository.updateToPaid({ paidInfo: { paidAt, paidAmount, paidBy }, status: 'paid' }, debtId)
     }
-    return true
   }
 }

@@ -6,5 +6,5 @@ export interface UpdateChargeAsPaidModel {
 }
 
 export interface UpdateChargeAsPaidUseCase {
-  update: (charge: UpdateChargeAsPaidModel) => Promise<boolean>
+  update: (charge: UpdateChargeAsPaidModel) => Promise<void>
 }

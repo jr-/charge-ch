@@ -15,25 +15,37 @@ export class CreateChargesUseCase implements CreateCharges {
 
   async create (chargesData: AddChargesModel): Promise<void> {
     const { charges } = chargesData
-    const chargePromises: Array<Promise<boolean>> = []
+    const chargePromises: Array<Promise<void>> = []
     charges.forEach(async charge => {
       chargePromises.push(this.createOne(charge))
     })
 
-    await Promise.all(chargePromises)
+    await Promise.allSettled(chargePromises)
   }
 
-  private async createOne (charge: AddChargeModel): Promise<boolean> {
-    const htmlBoleto = await this.generateBoleto.generate(charge)
-    const sendEmailInfo: SendEmailInfo = {
-      from: env.emailCharge.from,
-      to: charge.email,
-      subject: env.emailCharge.subject,
-      text: env.emailCharge.text,
-      html: htmlBoleto
+  private async createOne (charge: AddChargeModel): Promise<void> {
+    try {
+      const htmlBoleto = await this.generateBoleto.generate(charge)
+      if (!htmlBoleto) {
+        console.info(`Boleto nao gerado para ${charge.debtId}`)
+        return
+      }
+      const sendEmailInfo: SendEmailInfo = {
+        from: env.emailCharge.from,
+        to: charge.email,
+        subject: env.emailCharge.subject,
+        text: env.emailCharge.text,
+        html: htmlBoleto
+      }
+      const result = await this.sendEmail.send(sendEmailInfo)
+      if (!result) {
+        console.info(`Email nao enviado para ${charge.debtId}`)
+        return
+      }
+      await this.addChargeRepository.add(charge)
+    } catch (error) {
+      // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+      console.error(`${error.message} ${charge.debtId}`)
     }
-    await this.sendEmail.send(sendEmailInfo)
-    await this.addChargeRepository.add(charge)
-    return true
   }
 }

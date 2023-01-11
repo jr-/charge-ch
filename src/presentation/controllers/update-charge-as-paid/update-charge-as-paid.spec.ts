@@ -4,8 +4,7 @@ import { UpdateChargeAsPaidController } from './update-charge-as-paid'
 
 const makeUpdateChargeAsPaid = (): UpdateChargeAsPaidUseCase => {
   class UpdateChargeAsPaidStub implements UpdateChargeAsPaidUseCase {
-    async update (charge: UpdateChargeAsPaidModel): Promise<boolean> {
-      return true
+    async update (charge: UpdateChargeAsPaidModel): Promise<void> {
     }
   }
   return new UpdateChargeAsPaidStub()

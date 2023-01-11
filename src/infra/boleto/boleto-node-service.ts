@@ -8,30 +8,34 @@ const Boleto = require('boleto-node').Boleto
 
 export class BoletoNodeService implements GenerateBoleto {
   async generate (chargeInfo: AddChargeModel): Promise<string> {
-    const debtAmount = chargeInfo.debtAmount.replace(/\./g, '')
+    try {
+      const debtAmount = chargeInfo.debtAmount.replace(/\./g, '')
 
-    const boleto = new Boleto({
-      banco: env.boletoCharge.chargerInfo.bankName,
-      data_emissao: new Date(),
-      data_vencimento: parseISO(chargeInfo.debtDueDate),
-      valor: debtAmount,
-      nosso_numero: '1234567',
-      numero_documento: '123123',
-      instrucoes: env.boletoCharge.chargerInfo.instructions,
-      pagador: chargeInfo.name,
-      pagador_cpf_cnpj: chargeInfo.governamentId,
-      cedente: env.boletoCharge.chargerInfo.name,
-      cedente_cnpj: env.boletoCharge.chargerInfo.cnpj,
-      agencia: env.boletoCharge.chargerInfo.bankAgency,
-      codigo_cedente: env.boletoCharge.chargerInfo.bankCode,
-      carteira: '09'
-    })
+      const boleto = new Boleto({
+        banco: env.boletoCharge.chargerInfo.bankName,
+        data_emissao: new Date(),
+        data_vencimento: parseISO(chargeInfo.debtDueDate),
+        valor: debtAmount,
+        nosso_numero: '1234567',
+        numero_documento: '123123',
+        instrucoes: env.boletoCharge.chargerInfo.instructions,
+        pagador: chargeInfo.name,
+        pagador_cpf_cnpj: chargeInfo.governamentId,
+        cedente: env.boletoCharge.chargerInfo.name,
+        cedente_cnpj: env.boletoCharge.chargerInfo.cnpj,
+        agencia: env.boletoCharge.chargerInfo.bankAgency,
+        codigo_cedente: env.boletoCharge.chargerInfo.bankCode,
+        carteira: '09'
+      })
 
-    let boletoHtml
-    boleto.renderHTML('boleto', true, function (html) {
-      boletoHtml = html
-    })
-
-    return boletoHtml
+      let boletoHtml
+      boleto.renderHTML('boleto', true, function (html) {
+        boletoHtml = html
+      })
+      return boletoHtml
+    } catch (error) {
+      console.error(error.message, error.name)
+      throw new Error('Erro ao gerar boleto')
+    }
   }
 }
