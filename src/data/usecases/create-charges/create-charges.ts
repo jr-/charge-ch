@@ -1,4 +1,6 @@
+import { SendEmailInfo } from '../../../domain/models/email'
 import { AddChargeModel, AddChargeRepository, AddChargesModel, CreateCharges, GenerateBoleto, SendEmail } from './create-charges-protocols'
+import env from '../../../main/config/env'
 
 export class CreateChargesUseCase implements CreateCharges {
   private readonly generateBoleto: GenerateBoleto
@@ -11,7 +13,7 @@ export class CreateChargesUseCase implements CreateCharges {
     this.sendEmail = sendEmail
   }
 
-  async create (chargesData: AddChargesModel): Promise<boolean> {
+  async create (chargesData: AddChargesModel): Promise<void> {
     const { charges } = chargesData
     const chargePromises: Array<Promise<boolean>> = []
     charges.forEach(async charge => {
@@ -19,13 +21,18 @@ export class CreateChargesUseCase implements CreateCharges {
     })
 
     await Promise.all(chargePromises)
-
-    return true
   }
 
   private async createOne (charge: AddChargeModel): Promise<boolean> {
     const htmlBoleto = await this.generateBoleto.generate(charge)
-    await this.sendEmail.send(charge, htmlBoleto)
+    const sendEmailInfo: SendEmailInfo = {
+      from: env.emailCharge.from,
+      to: charge.email,
+      subject: env.emailCharge.subject,
+      text: env.emailCharge.text,
+      html: htmlBoleto
+    }
+    await this.sendEmail.send(sendEmailInfo)
     await this.addChargeRepository.add(charge)
     return true
   }

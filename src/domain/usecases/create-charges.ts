@@ -13,5 +13,5 @@ export interface AddChargesModel {
 }
 
 export interface CreateCharges {
-  create: (chargesData: AddChargesModel) => Promise<boolean>
+  create: (chargesData: AddChargesModel) => Promise<void>
 }

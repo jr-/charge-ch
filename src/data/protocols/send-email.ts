@@ -1,5 +1,5 @@
-import { AddChargeModel } from '../../domain/usecases/create-charges'
+import { SendEmailInfo } from '../../domain/models/email'
 
 export interface SendEmail {
-  send: (chargeModel: AddChargeModel, boletoHtml: string) => Promise<boolean>
+  send: (sendEmailInfo: SendEmailInfo) => Promise<boolean>
 }
