@@ -8,8 +8,13 @@
     "build": "rimraf dist && tsc",
     "up": "npm run build && docker-compose up",
     "start": "node dist/main/server.js",
-    "test": "jest",
-    "test:staged": "jest --passWithNoTests"
+    "test": "jest --passWithNoTests --silent --noStackTrace --runInBand",
+    "test:verbose": "jest --passWithNoTests --runInBand",
+    "test:unit": "npm test -- --watch -c jest-unit-config.js",
+    "test:integration": "npm test -- --watch -c jest-integration-config.js",
+    "test:integration:verbose": "npm run test:verbose -- --watch -c jest-integration-config.js",
+    "test:staged": "npm test -- --findRelatedTests ./src",
+    "test:ci": "npm test -- --coverage"
   },
   "keywords": [],
   "author": "",
