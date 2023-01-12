@@ -11,12 +11,14 @@ docker
 
 
 Passos para executar:
+`npm install` baixa as dependencias do projeto
 `npm run build` compila e gera os arquivos js
 `docker build -t charge-ch .` gera a imagem da node da api
 `docker-compose up` levanta a imagem juntamente com o mongodb
 
 
 ## Executando os testes
+
 
 
 ## Melhorias
