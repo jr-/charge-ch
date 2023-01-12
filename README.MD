@@ -5,6 +5,15 @@ O desafio foi realizado utilizando node.js, com typescript, express como framewo
 Foi estrutarado pensando na utilização da Clean Architecture e princípios do SOLID, utilizando TDD como metodologia de desenvolvimento.
 
 ## Executando a aplicação
+requisitos:
+node 18 (LTS)
+docker
+
+
+Passos para executar:
+`npm run build` compila e gera os arquivos js
+`docker build -t charge-ch .` gera a imagem da node da api
+`docker-compose up` levanta a imagem juntamente com o mongodb
 
 
 ## Executando os testes
