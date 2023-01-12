@@ -36,10 +36,10 @@ export class BoletoNodeService implements GenerateBoleto {
     })
 
     let boletoHtml
-    boleto.renderHTML('boleto', true, function (html) {
+    boleto.renderHTML('boleto', true, function (html: any) {
       boletoHtml = html
     })
 
-    return boletoHtml
+    return boletoHtml as unknown as string
   }
 }

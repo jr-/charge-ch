@@ -3,7 +3,7 @@ import { ChargeMongoRepository } from './charge'
 
 describe('Charge Mongo Repository', () => {
   beforeAll(async () => {
-    await MongoHelper.connect(process.env.MONGO_URL)
+    await MongoHelper.connect(process.env.MONGO_URL as string)
   })
 
   afterAll(async () => {
