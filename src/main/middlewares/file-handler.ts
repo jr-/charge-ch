@@ -4,7 +4,6 @@ import { Request, Response, NextFunction } from 'express'
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export const fileHandler = (req: Request, _: Response, next: NextFunction) => {
   const { file } = req
-  console.log(req.file)
   if (file !== undefined) {
     const mapFile: File =
     {

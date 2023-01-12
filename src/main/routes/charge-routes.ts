@@ -5,7 +5,6 @@ import { fileHandler } from '../middlewares/file-handler'
 import multer from 'multer'
 import path from 'path'
 const uploadFolder = path.join(__dirname, '../../../download')
-console.log(uploadFolder)
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, uploadFolder)
@@ -18,7 +17,6 @@ const storage = multer.diskStorage({
 })
 
 const upload = multer({ storage })
-console.log(upload)
 
 export default (router: Router): void => {
   router.post(

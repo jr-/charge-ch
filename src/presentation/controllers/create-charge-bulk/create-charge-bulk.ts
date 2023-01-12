@@ -16,7 +16,6 @@ export class CreateChargeBulkController implements Controller {
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       const { file } = httpRequest.body as { file: File }
-      console.log(file)
       if (!file) {
         return badRequest(new MissingParamError('file'))
       }
@@ -26,7 +25,6 @@ export class CreateChargeBulkController implements Controller {
 
       const uploadFolder = path.join(__dirname, '../../../../download/')
       const json = csvToJson.fieldDelimiter(',').getJsonFromCsv(`${uploadFolder}${file.name}`)
-      console.log(json)
       if (json.length === 0) {
         return badRequest(new InvalidParamError('file'))
       }
@@ -51,7 +49,6 @@ export class CreateChargeBulkController implements Controller {
 
       return ok({})
     } catch (error) {
-      console.log(error)
       return serverError()
     }
   }

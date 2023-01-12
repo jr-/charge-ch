@@ -28,7 +28,6 @@ export class UpdateChargeAsPaidController implements Controller {
       })
       return ok({})
     } catch (error) {
-      console.log(error)
       return serverError()
     }
   }
