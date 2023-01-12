@@ -43,7 +43,7 @@ export class CreateChargesUseCase implements CreateCharges {
         return
       }
       await this.addChargeRepository.add(charge)
-    } catch (error) {
+    } catch (error: any) {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       console.error(`${error.message} ${charge.debtId}`)
     }

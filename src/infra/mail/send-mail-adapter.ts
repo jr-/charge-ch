@@ -31,7 +31,7 @@ export class SendMailAdapter implements SendEmail {
       console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info))
 
       return info.messageId !== null
-    } catch (error) {
+    } catch (error: any) {
       console.error(error.message, error.name)
       throw new Error('Erro ao enviar email')
     }

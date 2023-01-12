@@ -4,7 +4,9 @@ import { Request, Response, NextFunction } from 'express'
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export const fileHandler = (req: Request, _: Response, next: NextFunction) => {
   const { file } = req
-  const mapFile: File =
+  console.log(req.file)
+  if (file !== undefined) {
+    const mapFile: File =
     {
       name: file.filename,
       type: file.mimetype,
@@ -13,7 +15,8 @@ export const fileHandler = (req: Request, _: Response, next: NextFunction) => {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       extension: `${file.originalname.split('.').pop()}`
     }
+    Object.assign(req.body, { file: mapFile })
+  }
 
-  Object.assign(req.body, { file: mapFile })
   next()
 }

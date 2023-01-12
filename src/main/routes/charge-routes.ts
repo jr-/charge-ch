@@ -18,6 +18,7 @@ const storage = multer.diskStorage({
 })
 
 const upload = multer({ storage })
+console.log(upload)
 
 export default (router: Router): void => {
   router.post(

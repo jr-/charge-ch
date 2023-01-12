@@ -29,11 +29,11 @@ export class BoletoNodeService implements GenerateBoleto {
       })
 
       let boletoHtml
-      boleto.renderHTML('boleto', true, function (html) {
+      boleto.renderHTML('boleto', true, function (html: any) {
         boletoHtml = html
       })
-      return boletoHtml
-    } catch (error) {
+      return boletoHtml as unknown as string
+    } catch (error: any) {
       console.error(error.message, error.name)
       throw new Error('Erro ao gerar boleto')
     }
